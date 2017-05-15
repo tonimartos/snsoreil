@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="imageid" />
+    <item type="id" name="auto_focus" />
+    <item type="id" name="decode" />
+    <item type="id" name="decode_failed" />
+    <item type="id" name="decode_succeeded" />
+    <item type="id" name="encode_failed" />
+    <item type="id" name="encode_succeeded" />
+    <item type="id" name="launch_product_query" />
+    <item type="id" name="quit" />
+    <item type="id" name="restart_preview" />
+    <item type="id" name="return_scan_result" />
+    <item type="id" name="search_book_contents_failed" />
+    <item type="id" name="search_book_contents_succeeded" />
+    <item type="id" name="gridview" />
+    <item type="id" name="webview" />
+    <item type="id" name="about_version_code">false</item>
+    <item type="id" name="split">false</item>
+    <item type="id" name="setting_content">false</item>
+    <item type="id" name="setting_title">false</item>
+    <item type="id" name="textView1">false</item>
+    <item type="id" name="textView2">false</item>
+    <item type="id" name="textView3">false</item>
+    <item type="id" name="textView4">false</item>
+    <item type="id" name="carico">false</item>
+    <item type="id" name="exit">false</item>
+    <item type="id" name="devicelistcon">false</item>
+    <item type="id" name="conset">false</item>
+    <item type="id" name="listView1">false</item>
+    <item type="id" name="devicelistuncon">false</item>
+    <item type="id" name="condisset">false</item>
+    <item type="id" name="listView2">false</item>
+    <item type="id" name="dialog_rl">false</item>
+    <item type="id" name="imageView1">false</item>
+    <item type="id" name="editText1">false</item>
+    <item type="id" name="studybtn1">false</item>
+    <item type="id" name="editText2">false</item>
+    <item type="id" name="studybtn2">false</item>
+    <item type="id" name="editText3">false</item>
+    <item type="id" name="studybtn3">false</item>
+    <item type="id" name="editText4">false</item>
+    <item type="id" name="studybtn4">false</item>
+    <item type="id" name="idset_ll1">false</item>
+    <item type="id" name="savebtn">false</item>
+    <item type="id" name="lunzik_rl">false</item>
+    <item type="id" name="barvalue1">false</item>
+    <item type="id" name="unittaiya1">false</item>
+    <item type="id" name="tempra1">false</item>
+    <item type="id" name="unittemp1">false</item>
+    <item type="id" name="set_rl">false</item>
+    <item type="id" name="seekimage">false</item>
+    <item type="id" name="title">false</item>
+    <item type="id" name="rel1">false</item>
+    <item type="id" name="battery_topmenu">false</item>
+    <item type="id" name="home_leftfont_rl">false</item>
+    <item type="id" name="rel2">false</item>
+    <item type="id" name="imageView2">false</item>
+    <item type="id" name="home_rightfont_rl">false</item>
+    <item type="id" name="barvalue2">false</item>
+    <item type="id" name="unittaiya2">false</item>
+    <item type="id" name="tempra2">false</item>
+    <item type="id" name="unittemp2">false</item>
+    <item type="id" name="rel3">false</item>
+    <item type="id" name="imageView3">false</item>
+    <item type="id" name="home_leftrear_rl">false</item>
+    <item type="id" name="barvalue3">false</item>
+    <item type="id" name="unittaiya3">false</item>
+    <item type="id" name="tempra3">false</item>
+    <item type="id" name="unittemp3">false</item>
+    <item type="id" name="rel4">false</item>
+    <item type="id" name="imageView4">false</item>
+    <item type="id" name="home_rightrear_rl">false</item>
+    <item type="id" name="barvalue4">false</item>
+    <item type="id" name="unittaiya4">false</item>
+    <item type="id" name="tempra4">false</item>
+    <item type="id" name="unittemp4">false</item>
+    <item type="id" name="exitbtn">false</item>
+    <item type="id" name="voicesetting">false</item>
+    <item type="id" name="setting">false</item>
+    <item type="id" name="settingvoicebtn">false</item>
+    <item type="id" name="settingbtn">false</item>
+    <item type="id" name="scrollView1">false</item>
+    <item type="id" name="textbindble">false</item>
+    <item type="id" name="devicename">false</item>
+    <item type="id" name="textlanguage">false</item>
+    <item type="id" name="lanuagesimple">false</item>
+    <item type="id" name="lanuagemulti">false</item>
+    <item type="id" name="lanuageenglish">false</item>
+    <item type="id" name="lanAuto">false</item>
+    <item type="id" name="textyali">false</item>
+    <item type="id" name="yalibar">false</item>
+    <item type="id" name="yalipis">false</item>
+    <item type="id" name="yalikpa">false</item>
+    <item type="id" name="yalikg">false</item>
+    <item type="id" name="texttemra">false</item>
+    <item type="id" name="temrac">false</item>
+    <item type="id" name="temraf">false</item>
+    <item type="id" name="set3">false</item>
+    <item type="id" name="setpower3">false</item>
+    <item type="id" name="set2">false</item>
+    <item type="id" name="setpower2">false</item>
+    <item type="id" name="set1">false</item>
+    <item type="id" name="setpower1">false</item>
+    <item type="id" name="yalitopvalue">false</item>
+    <item type="id" name="song_progress">false</item>
+    <item type="id" name="yalibottomvalue">false</item>
+    <item type="id" name="song_progress2">false</item>
+    <item type="id" name="tempratopvalue">false</item>
+    <item type="id" name="song_progress3">false</item>
+    <item type="id" name="imageSwitcher1">false</item>
+    <item type="id" name="progressBar1">false</item>
+    <item type="id" name="time_pb">false</item>
+    <item type="id" name="time_tv">false</item>
+</resources>
