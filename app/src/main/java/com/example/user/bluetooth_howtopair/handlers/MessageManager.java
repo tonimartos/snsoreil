@@ -1,7 +1,10 @@
-package com.example.user.bluetooth_howtopair;
+package com.example.user.bluetooth_howtopair.handlers;
 
 import android.content.Context;
 import android.content.Intent;
+
+import com.example.user.bluetooth_howtopair.BleDevice;
+import com.example.user.bluetooth_howtopair.BluetoothMultiService;
 
 public class MessageManager {
     public static final String LOGIN = "com.example.user.bluetooth_howtopair.login";

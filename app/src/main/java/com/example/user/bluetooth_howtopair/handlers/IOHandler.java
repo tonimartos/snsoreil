@@ -1,4 +1,4 @@
-package com.example.user.bluetooth_howtopair;
+package com.example.user.bluetooth_howtopair.handlers;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -11,8 +11,14 @@ import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;
+
 import com.example.user.bluetooth_howtopair.DevicesSetProvider.DevicesSetColumns;
 import com.example.user.bluetooth_howtopair.DevicesProvider.DevicesColumns;
+import com.example.user.bluetooth_howtopair.R;
+import com.example.user.bluetooth_howtopair.utils.ConfigParams;
+import com.example.user.bluetooth_howtopair.utils.ProviderUtils;
+import com.example.user.bluetooth_howtopair.utils.ServiceConstants;
+import com.example.user.bluetooth_howtopair.utils.UtilsConfig;
 
 public class IOHandler {
     byte[] cachebyte;

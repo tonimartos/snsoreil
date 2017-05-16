@@ -1,5 +1,9 @@
-package com.example.user.bluetooth_howtopair;
+package com.example.user.bluetooth_howtopair.handlers;
 
+
+import com.example.user.bluetooth_howtopair.activities.MainActivity;
+import com.example.user.bluetooth_howtopair.utils.ConfigApplication;
+import com.example.user.bluetooth_howtopair.utils.ConfigParams;
 
 public class ExampleApplication extends ConfigApplication {
     private static ExampleApplication instance;

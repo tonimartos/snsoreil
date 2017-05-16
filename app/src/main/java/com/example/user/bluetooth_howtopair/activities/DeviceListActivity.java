@@ -1,4 +1,4 @@
-package com.example.user.bluetooth_howtopair;
+package com.example.user.bluetooth_howtopair.activities;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -16,16 +16,17 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.example.user.bluetooth_howtopair.MessageManager;
-import com.example.user.bluetooth_howtopair.DevicesProvider.DevicesColumns;
-import com.example.user.bluetooth_howtopair.DevicesSetProvider.DevicesSetColumns;
-import com.example.user.bluetooth_howtopair.ProviderUtils;
+import com.example.user.bluetooth_howtopair.BleDevice;
 import com.example.user.bluetooth_howtopair.BluetoothMultiService;
 import com.example.user.bluetooth_howtopair.DeviceAdapter;
-import com.example.user.bluetooth_howtopair.BleDevice;
+import com.example.user.bluetooth_howtopair.DevicesProvider.DevicesColumns;
+import com.example.user.bluetooth_howtopair.DevicesSetProvider.DevicesSetColumns;
+import com.example.user.bluetooth_howtopair.handlers.MessageManager;
+import com.example.user.bluetooth_howtopair.utils.ProviderUtils;
+import com.example.user.bluetooth_howtopair.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DeviceListActivity extends OtherBaseActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
     protected static final int END = 0;

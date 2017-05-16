@@ -1,10 +1,13 @@
-package com.example.user.bluetooth_howtopair;
+package com.example.user.bluetooth_howtopair.handlers;
 
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+
+import com.example.user.bluetooth_howtopair.R;
+import com.example.user.bluetooth_howtopair.utils.Constants;
 
 
 public class NotificationExtend {

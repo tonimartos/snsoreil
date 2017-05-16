@@ -1,9 +1,13 @@
-package com.example.user.bluetooth_howtopair;
+package com.example.user.bluetooth_howtopair.utils;
 
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.media.TransportMediator;
 import android.support.v4.widget.CursorAdapter;
+
+import com.example.user.bluetooth_howtopair.handlers.ExampleApplication;
+import com.example.user.bluetooth_howtopair.R;
+import com.example.user.bluetooth_howtopair.activities.MainActivity;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;

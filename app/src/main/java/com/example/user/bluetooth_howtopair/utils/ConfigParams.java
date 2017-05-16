@@ -1,4 +1,4 @@
-package com.example.user.bluetooth_howtopair;
+package com.example.user.bluetooth_howtopair.utils;
 
 public class ConfigParams {
     public static final String HIGHPA = "highpa";

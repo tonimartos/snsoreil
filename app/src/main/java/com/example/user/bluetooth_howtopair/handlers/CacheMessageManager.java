@@ -1,4 +1,4 @@
-package com.example.user.bluetooth_howtopair;
+package com.example.user.bluetooth_howtopair.handlers;
 
 import android.os.Handler;
 import android.os.Message;

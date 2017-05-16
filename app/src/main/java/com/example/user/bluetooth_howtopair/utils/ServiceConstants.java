@@ -1,4 +1,4 @@
-package com.example.user.bluetooth_howtopair;
+package com.example.user.bluetooth_howtopair.utils;
 
 public class ServiceConstants {
     public static final String CONNECTSTATE_CHANGE = "com.example.user.bluetooth_howtopair.connectstate_change";

@@ -1,4 +1,4 @@
-package com.example.user.bluetooth_howtopair;
+package com.example.user.bluetooth_howtopair.activities;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -13,15 +13,14 @@ import android.support.v4.widget.CursorAdapter;
 import android.util.DisplayMetrics;
 import android.view.View;
 
-import java.util.Locale;
-
-import com.example.user.bluetooth_howtopair.ConfigParams;
-import com.example.user.bluetooth_howtopair.ExampleApplication;
 import com.example.user.bluetooth_howtopair.DevicesProvider.DevicesColumns;
-import com.example.user.bluetooth_howtopair.ServiceConstants;
-import com.example.user.bluetooth_howtopair.NotificationExtend;
-import com.example.user.bluetooth_howtopair.ObserverHandler;
-import com.example.user.bluetooth_howtopair.ObserverHandler.ObserverListener;
+import com.example.user.bluetooth_howtopair.handlers.NotificationExtend;
+import com.example.user.bluetooth_howtopair.handlers.ObserverHandler;
+import com.example.user.bluetooth_howtopair.handlers.ObserverHandler.ObserverListener;
+import com.example.user.bluetooth_howtopair.R;
+import com.example.user.bluetooth_howtopair.utils.ServiceConstants;
+
+import java.util.Locale;
 
 public abstract class OtherBaseActivity extends BaseActivity implements ObserverListener {
     private AlertDialog NoDevicedialog;

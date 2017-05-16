@@ -2,6 +2,8 @@ package com.example.user.bluetooth_howtopair;
 
 import android.bluetooth.BluetoothDevice;
 
+import com.example.user.bluetooth_howtopair.handlers.BluetoothDeviceVo;
+
 import java.io.Serializable;
 
 public class BleDevice implements Serializable {

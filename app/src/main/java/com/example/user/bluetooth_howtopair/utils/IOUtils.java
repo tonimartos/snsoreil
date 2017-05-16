@@ -1,10 +1,11 @@
-package com.example.user.bluetooth_howtopair;
+package com.example.user.bluetooth_howtopair.utils;
 
 import android.database.Cursor;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.media.TransportMediator;
 import android.support.v4.widget.CursorAdapter;
 import com.example.user.bluetooth_howtopair.DevicesSetProvider.DevicesSetColumns;
+import com.example.user.bluetooth_howtopair.handlers.Tyre;
 
 public class IOUtils {
     public static Tyre getTyre(Cursor cursor, int id1) {

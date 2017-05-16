@@ -1,11 +1,11 @@
-package com.example.user.bluetooth_howtopair;
+package com.example.user.bluetooth_howtopair.activities;
 
 import android.app.Activity;
 import android.widget.Toast;
 
-import com.example.user.bluetooth_howtopair.ExampleApplication;
-import com.example.user.bluetooth_howtopair.UtilsConfig;
-import com.example.user.bluetooth_howtopair.ObserverHandler;
+import com.example.user.bluetooth_howtopair.handlers.ExampleApplication;
+import com.example.user.bluetooth_howtopair.utils.UtilsConfig;
+import com.example.user.bluetooth_howtopair.handlers.ObserverHandler;
 
 public class BaseActivity extends Activity {
     protected ObserverHandler observerHandler;

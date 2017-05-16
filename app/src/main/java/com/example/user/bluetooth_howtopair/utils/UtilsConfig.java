@@ -1,4 +1,4 @@
-package com.example.user.bluetooth_howtopair;
+package com.example.user.bluetooth_howtopair.utils;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;

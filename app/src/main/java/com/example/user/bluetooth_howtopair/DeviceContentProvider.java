@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import java.util.HashMap;
 
 import com.example.user.bluetooth_howtopair.DevicesSetProvider.DevicesSetColumns;
+import com.example.user.bluetooth_howtopair.utils.Constants;
 
 public class DeviceContentProvider extends ContentProvider {
     private static final int DEVICES = 1;

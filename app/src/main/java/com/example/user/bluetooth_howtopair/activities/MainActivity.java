@@ -1,4 +1,4 @@
-package com.example.user.bluetooth_howtopair;
+package com.example.user.bluetooth_howtopair.activities;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.media.TransportMediator;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AppCompatActivity;
@@ -26,13 +25,20 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.user.bluetooth_howtopair.BluetoothMultiService;
+import com.example.user.bluetooth_howtopair.handlers.ByteUtils;
+import com.example.user.bluetooth_howtopair.utils.ConfigParams;
+import com.example.user.bluetooth_howtopair.DeviceListAdapter;
+import com.example.user.bluetooth_howtopair.DevicesProvider.DevicesColumns;
+import com.example.user.bluetooth_howtopair.handlers.ExampleApplication;
+import com.example.user.bluetooth_howtopair.utils.IOUtils;
+import com.example.user.bluetooth_howtopair.R;
+import com.example.user.bluetooth_howtopair.handlers.Tyre;
+import com.example.user.bluetooth_howtopair.utils.Utils;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-
-import com.example.user.bluetooth_howtopair.DevicesProvider.DevicesColumns;
-import com.example.user.bluetooth_howtopair.ObserverHandler;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
