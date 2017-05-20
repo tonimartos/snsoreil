@@ -30,7 +30,7 @@ public class NotificationExtend {
         notificationIntent.setAction("android.intent.action.MAIN");
         notificationIntent.addCategory("android.intent.category.LAUNCHER");
         PendingIntent contentIntent = PendingIntent.getActivity(this.context, 0, notificationIntent, 134217728);
-        //notification.setLatestEventInfo(this.context, Contants.DEVICENAME, "", contentIntent);
+        //notification.setLatestEventInfo(this.context, Constants.DEVICENAME, "", contentIntent);
         notificationManager.notify(0, notification);
     }
 

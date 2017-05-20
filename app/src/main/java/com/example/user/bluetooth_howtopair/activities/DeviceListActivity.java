@@ -3,14 +3,17 @@ package com.example.user.bluetooth_howtopair.activities;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,9 +24,9 @@ import com.example.user.bluetooth_howtopair.BluetoothMultiService;
 import com.example.user.bluetooth_howtopair.DeviceAdapter;
 import com.example.user.bluetooth_howtopair.DevicesProvider.DevicesColumns;
 import com.example.user.bluetooth_howtopair.DevicesSetProvider.DevicesSetColumns;
+import com.example.user.bluetooth_howtopair.R;
 import com.example.user.bluetooth_howtopair.handlers.MessageManager;
 import com.example.user.bluetooth_howtopair.utils.ProviderUtils;
-import com.example.user.bluetooth_howtopair.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,35 +38,34 @@ public class DeviceListActivity extends OtherBaseActivity implements AdapterView
     public static final int READRSSI = 107;
     private static final long SCAN_PERIOD = 10000;
     protected static final int TIMEOUT = 1;
-    private BluetoothAdapter adapter;
-    private List<BleDevice> devices1;
-    private List<BleDevice> devices2;
+    private BluetoothAdapter bluetoothAdapter;
+    private List<BleDevice> pairedDevices;
+    private List<BleDevice> unPairedDevices;
     private Handler handler;
-    private DeviceAdapter homeDevice1;
-    private DeviceAdapter homeDevice2;
-    private ListView homelist;
-    private ListView listView1;
+    private DeviceAdapter pairedAdapter;
+    private DeviceAdapter unPairedAdapter;
+    private ListView unPairedDevicesList;
+    private ListView pairedDevicesList;
     BluetoothAdapter.LeScanCallback mLeScanCallback;
     BroadcastReceiver receiver;
+    private ShitConnection shitConnection;
+    BluetoothMultiService homeBinder;
 
-    class C00601 extends BroadcastReceiver {
-        C00601() {
-        }
+    class Receiver extends BroadcastReceiver {
 
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals("android.bluetooth.adapter.action.STATE_CHANGED")) {
                 int state = intent.getIntExtra("android.bluetooth.adapter.extra.STATE", 10);
                 int prestate = intent.getIntExtra("android.bluetooth.adapter.extra.PREVIOUS_STATE", 10);
                 if (state == 12 && !BluetoothMultiService.mScanning) {
-                    DeviceListActivity.this.findDevices(true);
+                    findDevices(true);
                 }
             }
         }
     }
 
-    class C00622 implements BluetoothAdapter.LeScanCallback {
+    class BAScanCallback implements BluetoothAdapter.LeScanCallback {
 
-        /* renamed from: com.changhewulian.ble.taiya.activity.DeviceListActivity.2.1 */
         class C00611 implements Runnable {
             private final /* synthetic */ BluetoothDevice val$device;
             private final /* synthetic */ int val$rssi;
@@ -80,7 +82,7 @@ public class DeviceListActivity extends OtherBaseActivity implements AdapterView
             }
         }
 
-        C00622() {
+        BAScanCallback() {
         }
 
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
@@ -88,9 +90,8 @@ public class DeviceListActivity extends OtherBaseActivity implements AdapterView
         }
     }
 
-    /* renamed from: com.changhewulian.ble.taiya.activity.DeviceListActivity.3 */
-    class C00633 implements Runnable {
-        C00633() {
+    class StopFindingDevices implements Runnable {
+        StopFindingDevices() {
         }
 
         public void run() {
@@ -98,27 +99,39 @@ public class DeviceListActivity extends OtherBaseActivity implements AdapterView
         }
     }
 
-    public DeviceListActivity() {
-        this.adapter = null;
-        this.handler = new Handler();
-        this.receiver = new C00601();
-        this.mLeScanCallback = new C00622();
-    }
-
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setContentView(R.layout.activity_devicelist);
-        this.adapter = BluetoothAdapter.getDefaultAdapter();
-        this.listView1 = (ListView) findViewById(R.id.listView1);
-        this.homelist = (ListView) findViewById(R.id.listView2);
-        this.listView1.setOnItemClickListener(this);
-        this.homelist.setOnItemClickListener(this);
+
+        this.bluetoothAdapter = null;
+        this.handler = new Handler();
+        this.receiver = new Receiver();
+        this.mLeScanCallback = new BAScanCallback();
+        this.shitConnection = new ShitConnection();
+        this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        this.pairedDevicesList = (ListView) findViewById(R.id.listView1);
+        this.pairedDevicesList.setOnItemClickListener(this);
+        this.unPairedDevicesList = (ListView) findViewById(R.id.listView2);
+        this.unPairedDevicesList.setOnItemClickListener(this);
+        this.unPairedDevices = new ArrayList();
+        this.unPairedAdapter = new DeviceAdapter(this, this.unPairedDevices);
+        this.unPairedDevicesList.setAdapter(this.unPairedAdapter);
+        bindService(new Intent(this, BluetoothMultiService.class), shitConnection, BIND_AUTO_CREATE);
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.bluetooth.adapter.action.STATE_CHANGED");
         registerReceiver(this.receiver, filter);
-        this.devices2 = new ArrayList();
-        this.homeDevice2 = new DeviceAdapter(this, this.devices2);
-        this.homelist.setAdapter(this.homeDevice2);
+    }
+
+    class ShitConnection implements ServiceConnection {
+
+        public void onServiceDisconnected(ComponentName name) {
+            homeBinder = null;
+        }
+
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            homeBinder = ((BluetoothMultiService.HomeBinder) service).getService();
+            //homeBinder.connectDevices(false);
+        }
     }
 
     protected void onResume() {
@@ -156,10 +169,10 @@ public class DeviceListActivity extends OtherBaseActivity implements AdapterView
         strArr[ONNotifyStatus] = DevicesSetColumns.DEVICES_SYSTEMID;
         if (!ProviderUtils.existData(this, uri, values, strArr)) {
             int index = ONNotifyStatus;
-            for (BleDevice dev : this.devices2) {
+            for (BleDevice dev : this.unPairedDevices) {
                 if (dev.getMac().equals(device.getAddress())) {
-                    this.devices2.remove(dev);
-                    this.devices2.add(index, new BleDevice(device));
+                    this.unPairedDevices.remove(dev);
+                    this.unPairedDevices.add(index, new BleDevice(device));
                     return;
                 }
                 index += TIMEOUT;
@@ -167,8 +180,8 @@ public class DeviceListActivity extends OtherBaseActivity implements AdapterView
             BleDevice bleDevice = new BleDevice(device);
             bleDevice.setConnect(false);
             bleDevice.setUuid(device.getAddress());
-            this.devices2.add(bleDevice);
-            this.homeDevice2.notifyDataSetChanged();
+            this.unPairedDevices.add(bleDevice);
+            this.unPairedAdapter.notifyDataSetChanged();
         } else if (!TextUtils.isEmpty(device.getName())) {
             String[] strArr2 = new String[TIMEOUT];
             strArr2[ONNotifyStatus] = device.getAddress();
@@ -177,23 +190,23 @@ public class DeviceListActivity extends OtherBaseActivity implements AdapterView
     }
 
     public void findDevices(boolean isStick) {
-        if (!this.adapter.isEnabled()) {
+        if (!this.bluetoothAdapter.isEnabled()) {
             displayToast((int) R.string.dialog6);
         } else if (!BluetoothMultiService.mScanning) {
             BluetoothMultiService.mScanning = true;
             if (isStick) {
-                this.adapter.startLeScan(this.mLeScanCallback);
+                this.bluetoothAdapter.startLeScan(this.mLeScanCallback);
                 return;
             }
-            this.handler.postDelayed(new C00633(), SCAN_PERIOD);
-            this.adapter.startLeScan(this.mLeScanCallback);
+            this.handler.postDelayed(new StopFindingDevices(), SCAN_PERIOD);
+            this.bluetoothAdapter.startLeScan(this.mLeScanCallback);
         }
     }
 
     public void stopFindDevices() {
         BluetoothMultiService.mScanning = false;
-        if (this.adapter.isEnabled()) {
-            this.adapter.stopLeScan(this.mLeScanCallback);
+        if (this.bluetoothAdapter.isEnabled()) {
+            this.bluetoothAdapter.stopLeScan(this.mLeScanCallback);
         }
     }
 
@@ -226,26 +239,26 @@ public class DeviceListActivity extends OtherBaseActivity implements AdapterView
     }
 
     private void freshView() {
-        this.devices1 = new ArrayList();
+        this.pairedDevices = new ArrayList();
         Cursor cursor = getContentResolver().query(DevicesColumns.CONTENT_URI, null, null, null, null);
         while (cursor != null) {
-            BleDevice bleDevice = new BleDevice();
-            bleDevice.setName(cursor.getString(cursor.getColumnIndex(DevicesSetColumns.DEVICES_NAME)));
-            bleDevice.setMac(cursor.getString(cursor.getColumnIndex(DevicesSetColumns.DEVICES_SYSTEMID)));
-            bleDevice.setUuid(cursor.getString(cursor.getColumnIndex(DevicesSetColumns.DEVICES_SYSTEMID)));
-            bleDevice.setConnect(true);
-            for (BleDevice dev : this.devices2) {
-                if (dev.getMac().equals(bleDevice.getMac())) {
-                    this.devices2.remove(dev);
-                    this.homeDevice2.notifyDataSetChanged();
+            BleDevice pairedDevice = new BleDevice();
+            pairedDevice.setName(cursor.getString(cursor.getColumnIndex(DevicesSetColumns.DEVICES_NAME)));
+            pairedDevice.setMac(cursor.getString(cursor.getColumnIndex(DevicesSetColumns.DEVICES_SYSTEMID)));
+            pairedDevice.setUuid(cursor.getString(cursor.getColumnIndex(DevicesSetColumns.DEVICES_SYSTEMID)));
+            pairedDevice.setConnect(true);
+            for (BleDevice dev : this.unPairedDevices) {
+                if (dev.getMac().equals(pairedDevice.getMac())) {
+                    this.unPairedDevices.remove(dev);
+                    this.unPairedAdapter.notifyDataSetChanged();
                     return;
                 }
             }
-            this.devices1.add(bleDevice);
+            this.pairedDevices.add(pairedDevice);
             cursor.close();
         }
-        this.homeDevice1 = new DeviceAdapter(this, this.devices1);
-        this.listView1.setAdapter(this.homeDevice1);
+        this.pairedAdapter = new DeviceAdapter(this, this.pairedDevices);
+        this.pairedDevicesList.setAdapter(this.pairedAdapter);
     }
 }
 

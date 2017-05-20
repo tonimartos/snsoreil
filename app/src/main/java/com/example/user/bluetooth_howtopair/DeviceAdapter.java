@@ -57,6 +57,7 @@ public class DeviceAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag(R.id.imageid);
         }
+
         BleDevice device = (BleDevice) this.devices.get(position);
         ImageView imageView = holder.image;
         if (device.isConnect()) {

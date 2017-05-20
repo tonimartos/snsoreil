@@ -5,22 +5,22 @@ import com.example.user.bluetooth_howtopair.BleDevice;
 
 import java.io.Serializable;
 
-public class BluetoothDeviceVo implements Serializable {
+public class BluetoothDeviceModel implements Serializable {
     private static final long serialVersionUID = 1;
     private String address;
     private String name;
 
-    public BluetoothDeviceVo(String name, String mac) {
+    public BluetoothDeviceModel(String name, String mac) {
         this.name = name;
         this.address = mac;
     }
 
-    public BluetoothDeviceVo(BluetoothDevice device) {
+    public BluetoothDeviceModel(BluetoothDevice device) {
         this.name = device.getName();
         this.address = device.getAddress();
     }
 
-    public BluetoothDeviceVo(BleDevice bleDevice) {
+    public BluetoothDeviceModel(BleDevice bleDevice) {
         this.name = bleDevice.getName();
         this.address = bleDevice.getMac();
     }

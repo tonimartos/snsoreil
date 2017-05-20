@@ -2,7 +2,7 @@ package com.example.user.bluetooth_howtopair;
 
 import android.bluetooth.BluetoothDevice;
 
-import com.example.user.bluetooth_howtopair.handlers.BluetoothDeviceVo;
+import com.example.user.bluetooth_howtopair.handlers.BluetoothDeviceModel;
 
 import java.io.Serializable;
 
@@ -20,7 +20,7 @@ public class BleDevice implements Serializable {
         this.name = device.getName();
     }
 
-    public BleDevice(BluetoothDeviceVo device) {
+    public BleDevice(BluetoothDeviceModel device) {
         this.mac = device.getAddress();
         this.name = device.getName();
     }

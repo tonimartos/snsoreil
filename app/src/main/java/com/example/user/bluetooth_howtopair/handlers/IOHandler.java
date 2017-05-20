@@ -52,7 +52,7 @@ public class IOHandler {
         this.cachebytelength = 0;
         this.listener = service;
         this.context = service.getContext();
-        this.resolver = this.context.getContentResolver();
+//        TODO this.resolver = this.context.getContentResolver();
     }
 
     public void handler(DataUnit data) {

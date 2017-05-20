@@ -471,7 +471,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             int i;
             if (this.titlecon.size() == 0) {
                 this.title.setTextColor(-1);
-                if (BluetoothMultiService.isconnect) {
+                if (BluetoothMultiService.isConnect) {
                     editText = this.title;
                     i = R.string.menu2en;
                     editText.setText(i);
@@ -482,7 +482,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             } else {
                 this.title.setTextColor(getResources().getColor(R.color.common_select_back7));
-                if (BluetoothMultiService.isconnect) {
+                if (BluetoothMultiService.isConnect) {
                     editText = this.title;
                     i = R.string.menu2en;
                     editText.setText(i);
