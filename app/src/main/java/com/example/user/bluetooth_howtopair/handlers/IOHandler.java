@@ -10,6 +10,7 @@ import android.support.v4.media.TransportMediator;
 import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.user.bluetooth_howtopair.DevicesSetProvider.DevicesSetColumns;
@@ -52,7 +53,7 @@ public class IOHandler {
         this.cachebytelength = 0;
         this.listener = service;
         this.context = service.getContext();
-//        TODO this.resolver = this.context.getContentResolver();
+        //this.resolver = this.context.getContentResolver();
     }
 
     public void handler(DataUnit data) {
@@ -124,6 +125,7 @@ public class IOHandler {
                     return;
                 }
                 this.order = this.databyte[2];
+                //this.order = -59;
                 switch (this.order) {
                     case -91:
                         if (ExampleApplication.getInstance().getBooleanValue(ConfigParams.OBDPOWERVOICE)) {
@@ -156,6 +158,7 @@ public class IOHandler {
                         sendBroadcastNotify(ServiceConstants.SETTING_CHANGE);
                     case CursorAdapter.FLAG_AUTO_REQUERY /*1*/:
                         getDeviceStatus();
+                        Log.d("CASE 1", "Asking for device status to DB");
                     case CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER /*2*/:
                         getHignLowPa(ConfigParams.LOWPA);
                     case NotificationCompat.WearableExtender.SIZE_MEDIUM /*3*/:
@@ -163,6 +166,8 @@ public class IOHandler {
                     case TransportMediator.FLAG_KEY_MEDIA_PLAY /*4*/:
                         this.listener.onToast((int) R.string.taiyasetsuccess);
                         getDeviceId();
+                        getHignLowPa(ConfigParams.LOWPA);
+                        getHignLowPa(ConfigParams.HIGHPA);
                     case NotificationCompat.WearableExtender.SIZE_FULL_SCREEN /*5*/:
                         if (msg.length == 9) {
                             this.listener.onToast((int) R.string.toast6);
@@ -195,6 +200,18 @@ public class IOHandler {
     }
 
     private void getDeviceIds() {
+        byte[] items = new byte[4];
+        System.arraycopy(this.databyte, 3, items, 0, items.length);
+        Log.d("ID1", UtilsConfig.bytesToHex(items));
+        System.arraycopy(this.databyte, 7, items, 0, items.length);
+        Log.d("ID2", UtilsConfig.bytesToHex(items));
+        System.arraycopy(this.databyte, 11, items, 0, items.length);
+        Log.d("ID3", UtilsConfig.bytesToHex(items));
+        System.arraycopy(this.databyte, 15, items, 0, items.length);
+        Log.d("ID4", UtilsConfig.bytesToHex(items));
+    }
+
+    /*private void getDeviceIds() {
         ContentValues values = new ContentValues();
         byte[] items = new byte[4];
         System.arraycopy(this.databyte, 3, items, 0, items.length);
@@ -208,70 +225,29 @@ public class IOHandler {
         values.put(DevicesSetColumns.DEVICES_SYSTEMID, this.mac);
         values.put(DevicesSetColumns.DEVICES_LASTTIME, Long.valueOf(System.currentTimeMillis()));
         ProviderUtils.insertData(this.context, DevicesColumns.CONTENT_URI, values, DevicesSetColumns.DEVICES_SYSTEMID);
-    }
+    }*/
 
     private void getChangeResult() {
         this.listener.queryId();
     }
 
-    private void setTyre(Tyre tyre, int id) {
-        ContentValues values = new ContentValues();
-        switch (id) {
-            case CursorAdapter.FLAG_AUTO_REQUERY /*1*/:
-                values.put(DevicesSetColumns.DEVICES_IR1, Integer.valueOf(tyre.getIr()));
-                values.put(DevicesSetColumns.DEVICES_TY1, Integer.valueOf(tyre.getTy()));
-                values.put(DevicesSetColumns.DEVICES_TW1, Integer.valueOf(tyre.getTw()));
-                values.put(DevicesSetColumns.DEVICES_DL1, Integer.valueOf(tyre.getDl()));
-                values.put(DevicesSetColumns.DEVICES_DISTYPE1, Integer.valueOf(tyre.getDis()));
-                break;
-            case CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER /*2*/:
-                values.put(DevicesSetColumns.DEVICES_IR2, Integer.valueOf(tyre.getIr()));
-                values.put(DevicesSetColumns.DEVICES_TY2, Integer.valueOf(tyre.getTy()));
-                values.put(DevicesSetColumns.DEVICES_TW2, Integer.valueOf(tyre.getTw()));
-                values.put(DevicesSetColumns.DEVICES_DL2, Integer.valueOf(tyre.getDl()));
-                values.put(DevicesSetColumns.DEVICES_DISTYPE2, Integer.valueOf(tyre.getDis()));
-                break;
-            case NotificationCompat.WearableExtender.SIZE_MEDIUM /*3*/:
-                values.put(DevicesSetColumns.DEVICES_IR3, Integer.valueOf(tyre.getIr()));
-                values.put(DevicesSetColumns.DEVICES_TY3, Integer.valueOf(tyre.getTy()));
-                values.put(DevicesSetColumns.DEVICES_TW3, Integer.valueOf(tyre.getTw()));
-                values.put(DevicesSetColumns.DEVICES_DL3, Integer.valueOf(tyre.getDl()));
-                values.put(DevicesSetColumns.DEVICES_DISTYPE3, Integer.valueOf(tyre.getDis()));
-                break;
-            case TransportMediator.FLAG_KEY_MEDIA_PLAY /*4*/:
-                values.put(DevicesSetColumns.DEVICES_IR4, Integer.valueOf(tyre.getIr()));
-                values.put(DevicesSetColumns.DEVICES_TY4, Integer.valueOf(tyre.getTy()));
-                values.put(DevicesSetColumns.DEVICES_TW4, Integer.valueOf(tyre.getTw()));
-                values.put(DevicesSetColumns.DEVICES_DL4, Integer.valueOf(tyre.getDl()));
-                values.put(DevicesSetColumns.DEVICES_DISTYPE4, Integer.valueOf(tyre.getDis()));
-                break;
-        }
-        values.put(DevicesSetColumns.DEVICES_SYSTEMID, this.mac);
-        values.put(DevicesSetColumns.DEVICES_LASTTIME, Long.valueOf(System.currentTimeMillis()));
-        ProviderUtils.insertData(this.context, DevicesColumns.CONTENT_URI, values, DevicesSetColumns.DEVICES_SYSTEMID);
-    }
-
     private void getDeviceId() {
         byte[] items = new byte[4];
         System.arraycopy(this.databyte, 4, items, 0, items.length);
-        ContentValues values = new ContentValues();
         switch (this.databyte[3]) {
-            case CursorAdapter.FLAG_AUTO_REQUERY /*1*/:
-                values.put(DevicesSetColumns.DEVICES_ID1, UtilsConfig.bytesToHex(items));
+            case 1 : //1
+                Log.d("ID1", UtilsConfig.bytesToHex(items));
                 break;
-            case CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER /*2*/:
-                values.put(DevicesSetColumns.DEVICES_ID2, UtilsConfig.bytesToHex(items));
+            case 2 : //2
+                Log.d("ID2", UtilsConfig.bytesToHex(items));
                 break;
-            case NotificationCompat.WearableExtender.SIZE_MEDIUM /*3*/:
-                values.put(DevicesSetColumns.DEVICES_ID3, UtilsConfig.bytesToHex(items));
+            case 3 : //3
+                Log.d("ID3", UtilsConfig.bytesToHex(items));
                 break;
-            case TransportMediator.FLAG_KEY_MEDIA_PLAY /*4*/:
-                values.put(DevicesSetColumns.DEVICES_ID4, UtilsConfig.bytesToHex(items));
+            case 4 : //4
+                Log.d("ID4", UtilsConfig.bytesToHex(items));
                 break;
         }
-        values.put(DevicesSetColumns.DEVICES_SYSTEMID, this.mac);
-        values.put(DevicesSetColumns.DEVICES_LASTTIME, Long.valueOf(System.currentTimeMillis()));
-        ProviderUtils.insertData(this.context, DevicesColumns.CONTENT_URI, values, DevicesSetColumns.DEVICES_SYSTEMID);
     }
 
     private void getHignLowPa(String key) {
@@ -279,7 +255,7 @@ public class IOHandler {
         ExampleApplication instance;
         int absValue;
         switch (this.databyte[3]) {
-            case CursorAdapter.FLAG_AUTO_REQUERY /*1*/:
+            case 1:
                 instance = ExampleApplication.getInstance();
                 absValue = getAbsValue(this.databyte[4]);
                 if (!key.equals(ConfigParams.LOWPA)) {
@@ -287,7 +263,7 @@ public class IOHandler {
                 }
                 instance.setValue(key, absValue - i);
                 break;
-            case CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER /*2*/:
+            case 2:
                 instance = ExampleApplication.getInstance();
                 absValue = getAbsValue(this.databyte[4]);
                 if (!key.equals(ConfigParams.LOWPA)) {
@@ -295,7 +271,7 @@ public class IOHandler {
                 }
                 instance.setValue(key, absValue - i);
                 break;
-            case NotificationCompat.WearableExtender.SIZE_MEDIUM /*3*/:
+            case 3:
                 instance = ExampleApplication.getInstance();
                 absValue = getAbsValue(this.databyte[4]);
                 if (!key.equals(ConfigParams.LOWPA)) {
@@ -303,7 +279,7 @@ public class IOHandler {
                 }
                 instance.setValue(key, absValue - i);
                 break;
-            case TransportMediator.FLAG_KEY_MEDIA_PLAY /*4*/:
+            case 4:
                 instance = ExampleApplication.getInstance();
                 absValue = getAbsValue(this.databyte[4]);
                 if (!key.equals(ConfigParams.LOWPA)) {
@@ -320,40 +296,36 @@ public class IOHandler {
     }
 
     private void getDeviceStatus() {
-        ContentValues values = new ContentValues();
         switch (getAbsValue(this.databyte[3])) {
-            case CursorAdapter.FLAG_AUTO_REQUERY /*1*/:
-                values.put(DevicesSetColumns.DEVICES_IR1, Integer.valueOf(getAbsValue(this.databyte[4])));
-                values.put(DevicesSetColumns.DEVICES_TY1, Integer.valueOf(getAbsValue(this.databyte[5])));
-                values.put(DevicesSetColumns.DEVICES_TW1, Integer.valueOf(getAbsValue(this.databyte[6])));
-                values.put(DevicesSetColumns.DEVICES_DL1, Integer.valueOf(getAbsValue(this.databyte[7])));
-                values.put(DevicesSetColumns.DEVICES_DISTYPE1, Integer.valueOf(getAbsValue(this.databyte[8])));
+            case 1:
+                Log.d("DEVICES_IR1", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
+                Log.d("DEVICES_TY1", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
+                Log.d("DEVICES_TW1", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
+                Log.d("DEVICES_DL1", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
+                Log.d("DEVICES_DISTYPE1", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
                 break;
-            case CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER /*2*/:
-                values.put(DevicesSetColumns.DEVICES_IR2, Integer.valueOf(getAbsValue(this.databyte[4])));
-                values.put(DevicesSetColumns.DEVICES_TY2, Integer.valueOf(getAbsValue(this.databyte[5])));
-                values.put(DevicesSetColumns.DEVICES_TW2, Integer.valueOf(getAbsValue(this.databyte[6])));
-                values.put(DevicesSetColumns.DEVICES_DL2, Integer.valueOf(getAbsValue(this.databyte[7])));
-                values.put(DevicesSetColumns.DEVICES_DISTYPE2, Integer.valueOf(getAbsValue(this.databyte[8])));
+            case 2:
+                Log.d("DEVICES_IR1", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
+                Log.d("DEVICES_TY1", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
+                Log.d("DEVICES_TW1", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
+                Log.d("DEVICES_DL1", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
+                Log.d("DEVICES_DISTYPE1", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
                 break;
-            case NotificationCompat.WearableExtender.SIZE_MEDIUM /*3*/:
-                values.put(DevicesSetColumns.DEVICES_IR3, Integer.valueOf(getAbsValue(this.databyte[4])));
-                values.put(DevicesSetColumns.DEVICES_TY3, Integer.valueOf(getAbsValue(this.databyte[5])));
-                values.put(DevicesSetColumns.DEVICES_TW3, Integer.valueOf(getAbsValue(this.databyte[6])));
-                values.put(DevicesSetColumns.DEVICES_DL3, Integer.valueOf(getAbsValue(this.databyte[7])));
-                values.put(DevicesSetColumns.DEVICES_DISTYPE3, Integer.valueOf(getAbsValue(this.databyte[8])));
+            case 3:
+                Log.d("DEVICES_IR1", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
+                Log.d("DEVICES_TY1", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
+                Log.d("DEVICES_TW1", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
+                Log.d("DEVICES_DL1", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
+                Log.d("DEVICES_DISTYPE1", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
                 break;
-            case TransportMediator.FLAG_KEY_MEDIA_PLAY /*4*/:
-                values.put(DevicesSetColumns.DEVICES_IR4, Integer.valueOf(getAbsValue(this.databyte[4])));
-                values.put(DevicesSetColumns.DEVICES_TY4, Integer.valueOf(getAbsValue(this.databyte[5])));
-                values.put(DevicesSetColumns.DEVICES_TW4, Integer.valueOf(getAbsValue(this.databyte[6])));
-                values.put(DevicesSetColumns.DEVICES_DL4, Integer.valueOf(getAbsValue(this.databyte[7])));
-                values.put(DevicesSetColumns.DEVICES_DISTYPE4, Integer.valueOf(getAbsValue(this.databyte[8])));
+            case 4:
+                Log.d("DEVICES_IR1", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
+                Log.d("DEVICES_TY1", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
+                Log.d("DEVICES_TW1", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
+                Log.d("DEVICES_DL1", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
+                Log.d("DEVICES_DISTYPE1", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
                 break;
         }
-        values.put(DevicesSetColumns.DEVICES_SYSTEMID, this.mac);
-        values.put(DevicesSetColumns.DEVICES_LASTTIME, Long.valueOf(System.currentTimeMillis()));
-        ProviderUtils.insertData(this.context, DevicesColumns.CONTENT_URI, values, DevicesSetColumns.DEVICES_SYSTEMID);
     }
 
     private void getLength() {

@@ -18,15 +18,19 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.media.TransportMediator;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.user.bluetooth_howtopair.handlers.BluetoothDeviceModel;
 import com.example.user.bluetooth_howtopair.handlers.CacheMessageManager;
 import com.example.user.bluetooth_howtopair.handlers.CacheMessageManager.CacheMessageListener;
 import com.example.user.bluetooth_howtopair.handlers.DataUnit;
+import com.example.user.bluetooth_howtopair.handlers.ExampleApplication;
 import com.example.user.bluetooth_howtopair.handlers.IOHandler;
 import com.example.user.bluetooth_howtopair.handlers.IOHandler.IOHandlerListener;
 import com.example.user.bluetooth_howtopair.handlers.MessageManager;
+import com.example.user.bluetooth_howtopair.handlers.Tyre;
+import com.example.user.bluetooth_howtopair.utils.ConfigParams;
 import com.example.user.bluetooth_howtopair.utils.Constants;
 import com.example.user.bluetooth_howtopair.utils.ServiceConstants;
 import com.example.user.bluetooth_howtopair.utils.UtilsConfig;
@@ -56,6 +60,8 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
     private CacheMessageManager manager;
     private IOHandler ioHandler;
     private BluetoothAdapter bluetoothAdapter;
+    private BluetoothDevice bluetoothDevice;
+    private BluetoothGattCharacteristic mWriteCharacteristic;
     private IBinder mBinder;
     private BluetoothGatt mBluetoothGatt;
     private BluetoothGattCallback connectionCallback;
@@ -134,7 +140,7 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
 
     @Override
     public Context getContext() {
-        return null;
+        return this;
     }
 
     @Override
@@ -157,9 +163,9 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
         writeBytes(UtilsConfig.chatOrders(Constants.QUERYID));
     }
 
-    @Override
-    public void NextMessage(Object obj) {
-
+    protected void onMessage(String message) {
+        if (!TextUtils.isEmpty(message)) {
+        }
     }
 
     public void connectDevices(BluetoothDeviceModel modelDevice, boolean sure) {
@@ -194,11 +200,12 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
             case 2 /*2*/:
                 isConnect = true;
             case 3 /*3*/:
-                isConnect = false;
+                //isConnect = false;
+                isConnect = true;
             case 4 /*4*/:
                 isConnect = false;
-                this.writeCharacteristic = null;
-                this.mBluetoothGatt = null;
+                //this.writeCharacteristic = null;
+                //this.mBluetoothGatt = null;
                 //TODO deleteDeviceFromDB();
                 if (!mScanning && this.mBluetoothGatt != null) {
                     //findDevices(true);
@@ -264,6 +271,8 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
                 int length = arrayOfByte.length;
                 Log.i("length", Integer.toString(length));
                 messenger.obtainMessage(BluetoothMultiService.RECEIVEDATA, new DataUnit(gatt.getDevice().getAddress(), arrayOfByte)).sendToTarget();
+
+                Log.i("RECEIVE DATA", String.valueOf(messenger));
             }
         }
 
@@ -275,7 +284,13 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
             }
             int length = arrayOfByte.length;
             Log.i("length", Integer.toString(length));
-            messenger.obtainMessage(BluetoothMultiService.RECEIVEDATA, new DataUnit(gatt.getDevice().getAddress(), arrayOfByte)).sendToTarget();
+
+            DataUnit dataUnit = new DataUnit(gatt.getDevice(), arrayOfByte);
+
+            messenger.obtainMessage(BluetoothMultiService.RECEIVEDATA, dataUnit).sendToTarget();
+            receiveData(dataUnit);
+
+            Log.i("RECEIVE DATA", String.valueOf(messenger));
         }
 
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
@@ -304,7 +319,12 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
 
                     if (gattCharacteristic.getUuid().toString().equalsIgnoreCase(Constants.BLUETOOTH_WRITEUUID.toString())) {
 
+                        this.mWriteCharacteristic = gattCharacteristic;
+                        this.mWriteCharacteristic.setWriteType(2);
+
+                        onCharacteristicRead(gatt, gattCharacteristic);
                         onCharacteristicWrite(gatt, gattCharacteristic);
+                        saveConnectedDevice(this.mWriteCharacteristic, gatt);
 
                     } else if (gattCharacteristic.getUuid().toString().equalsIgnoreCase(Constants.BLUETOOTH_UUID.toString())) {
 
@@ -341,7 +361,8 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
         } catch (InterruptedException e2) {
             e2.printStackTrace();
         }
-        this.messenger.obtainMessage(ONMESSAGE, new StringBuilder(String.valueOf(gatt.getDevice().getAddress())).append("  \u53d1\u73b0READ UUID Service").toString()).sendToTarget();
+        //this.messenger.obtainMessage(ONMESSAGE, new StringBuilder(String.valueOf(gatt.getDevice().getAddress())).append("  READ UUID Service").toString()).sendToTarget();
+        this.messenger.obtainMessage(ONMESSAGE, new BluetoothDeviceModel(gatt.getDevice())).sendToTarget();
     }
 
     public void setCharacteristicNotification(BluetoothGattCharacteristic characteristic, boolean enabled) {
@@ -360,11 +381,13 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
         }
     }
 
-    /*TODO private void saveConnectedDevice(BluetoothGattCharacteristic writeCharacteristic, BluetoothGatt gatt) {
+    private void saveConnectedDevice(BluetoothGattCharacteristic writeCharacteristic, BluetoothGatt gatt) {
         this.mBluetoothGatt = gatt;
-        this.device = gatt.getDevice();
+        this.bluetoothDevice = gatt.getDevice();
         this.writeCharacteristic = writeCharacteristic;
 
+        messenger.obtainMessage(CONNECTTED, new BluetoothDeviceModel(gatt.getDevice())).sendToTarget();
+        /*
         ContentValues values = new ContentValues();
         values.put(DevicesSetColumns.DEVICES_SYSTEMID, gatt.getDevice().getAddress());
 
@@ -385,10 +408,8 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
         ProviderUtils.insertData(this, uri, values, strArr);
         ExampleApplication.getInstance().setValue(ConfigParams.LASTBINDNOTIFYMAC, gatt.getDevice().getAddress());
 
-        this.messenger.obtainMessage(CONNECTTED, new BluetoothDeviceVo(gatt.getDevice())).sendToTarget();
+        this.messenger.obtainMessage(CONNECTTED, new BluetoothDeviceVo(gatt.getDevice())).sendToTarget();*/
     }
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)*/
 
     public static final int CLOSESEARCH = 101;
     public static final int CONNECTDEVICE = 102;
@@ -407,7 +428,7 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
                 case BluetoothMultiService.RECEIVEDATA /*103*/:
                     BluetoothMultiService.this.receiveData((DataUnit)msg.obj);
                 case BluetoothMultiService.ONMESSAGE /*105*/:
-                    //BluetoothMultiService.this.onMessage(msg.obj);
+                    BluetoothMultiService.this.onMessage(msg.obj.toString());
                 case BluetoothMultiService.CONNECTTED /*106*/:
                     BluetoothMultiService.this.onConnectDevice((BluetoothDeviceModel)msg.obj);
                 case BluetoothMultiService.DELAYTASKMESSAGE /*107*/:
@@ -422,5 +443,24 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
         //onToast((int) R.string.dialog7);
         queryId();
         //messenger.sendMessageDelayed(messenger.obtainMessage(DELAYTASKMESSAGE, ORDER_QUERYSET, -1), DEALYTASK);
+    }
+
+    public void NextMessage(Object data) {
+        if (this.mWriteCharacteristic == null || this.mBluetoothGatt == null) {
+            sendBroadcast(new Intent(ServiceConstants.NOCONNECTION));
+            return;
+        }
+        this.mWriteCharacteristic.setValue((byte[]) data);
+        this.mBluetoothGatt.writeCharacteristic(this.mWriteCharacteristic);
+    }
+
+
+    public void getTyreData (Tyre tyre, int id){
+        Integer irh = ExampleApplication.getInstance().getIntValue(ConfigParams.HIGHPA);
+        Integer irl = ExampleApplication.getInstance().getIntValue(ConfigParams.LOWPA);
+        Integer itw = ExampleApplication.getInstance().getIntValue(ConfigParams.HIGHTW);
+        Integer idl = ExampleApplication.getInstance().getIntValue(ConfigParams.LOWDL);
+
+        Log.d("Tyre data", irh.toString() + irl.toString() + itw.toString() + idl.toString());
     }
 }
