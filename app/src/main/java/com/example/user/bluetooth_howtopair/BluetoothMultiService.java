@@ -20,6 +20,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.media.TransportMediator;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.user.bluetooth_howtopair.handlers.BluetoothDeviceModel;
 import com.example.user.bluetooth_howtopair.handlers.CacheMessageManager;
@@ -150,7 +151,7 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
 
     @Override
     public void onToast(int i) {
-
+        Toast.makeText(this, i, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -197,11 +198,14 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
         switch (state) {
             case 1 /*1*/:
                 isConnect = true;
+                break;
             case 2 /*2*/:
                 isConnect = true;
+                break;
             case 3 /*3*/:
-                //isConnect = false;
-                isConnect = true;
+                isConnect = false;
+                break;
+                //isConnect = true;
             case 4 /*4*/:
                 isConnect = false;
                 //this.writeCharacteristic = null;
@@ -210,7 +214,9 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
                 if (!mScanning && this.mBluetoothGatt != null) {
                     //findDevices(true);
                 }
+                break;
             default:
+                break;
         }
     }
 
@@ -288,9 +294,9 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
             DataUnit dataUnit = new DataUnit(gatt.getDevice(), arrayOfByte);
 
             messenger.obtainMessage(BluetoothMultiService.RECEIVEDATA, dataUnit).sendToTarget();
-            receiveData(dataUnit);
+            //receiveData(dataUnit);
 
-            Log.i("RECEIVE DATA", String.valueOf(messenger));
+            Log.i("RECEIVE DATA", String.valueOf(messenger.obtainMessage(103, dataUnit)));
         }
 
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
@@ -304,8 +310,8 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
         }
 
         public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
-            /* TODO Log.i(BluetoothMultiService.TAG, "onDescriptorWrite");
-            super.onDescriptorWrite(gatt, descriptor, status);
+             Log.i(BluetoothMultiService.TAG, "onDescriptorWrite");
+            /*super.onDescriptorWrite(gatt, descriptor, status);
             if (!BluetoothMultiService.this.hasinit) {
                 BluetoothMultiService.this.messenger.sendEmptyMessage(BluetoothMultiService.INITORDER);
             }*/
@@ -322,30 +328,31 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
                         this.mWriteCharacteristic = gattCharacteristic;
                         this.mWriteCharacteristic.setWriteType(2);
 
-                        onCharacteristicRead(gatt, gattCharacteristic);
-                        onCharacteristicWrite(gatt, gattCharacteristic);
+                        //characteristicWrite(gatt, gattCharacteristic);
+                        //characteristicRead(gatt, gattCharacteristic);
                         saveConnectedDevice(this.mWriteCharacteristic, gatt);
 
                     } else if (gattCharacteristic.getUuid().toString().equalsIgnoreCase(Constants.BLUETOOTH_UUID.toString())) {
 
-                        //this.messenger.obtainMessage(ONMESSAGE, new StringBuilder(String.valueOf(gatt.getDevice().getAddress())).append("  \u53d1\u73b0 UUID Service").toString()).sendToTarget();
+                        this.messenger.obtainMessage(ONMESSAGE, new BluetoothDeviceModel(gatt.getDevice())).sendToTarget();
 
                     } else if (gattCharacteristic.getUuid().toString().equalsIgnoreCase(Constants.BLUETOOTH_READUUID.toString())) {
-                        onCharacteristicRead(gatt, gattCharacteristic);
+                        characteristicRead(gatt, gattCharacteristic);
+                        this.messenger.obtainMessage(ONMESSAGE, new BluetoothDeviceModel(gatt.getDevice())).sendToTarget();
                     }
                 }
             }
         }
     }
 
-    private void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic gattCharacteristic) {
+    private void characteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic gattCharacteristic) {
         this.writeCharacteristic = gattCharacteristic;
         this.writeCharacteristic.setWriteType(2);
         Log.d("peneloco", "onCharacteristicWrite");
         //saveConnectedDevice(this.writeCharacteristic, gatt);
     }
 
-    private void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic gattCharacteristic) {
+    private void characteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic gattCharacteristic) {
         this.notifyCharacteristic = gattCharacteristic;
 
         try {
@@ -387,6 +394,7 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
         this.writeCharacteristic = writeCharacteristic;
 
         messenger.obtainMessage(CONNECTTED, new BluetoothDeviceModel(gatt.getDevice())).sendToTarget();
+        //messenger.obtainMessage(RECEIVEDATA, new BluetoothDeviceModel(gatt.getDevice())).sendToTarget();
         /*
         ContentValues values = new ContentValues();
         values.put(DevicesSetColumns.DEVICES_SYSTEMID, gatt.getDevice().getAddress());
@@ -417,12 +425,14 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
     public static final int RECEIVEDATA = 103;
     public static final int ONMESSAGE = 105;
     protected static final int DELAYTASKMESSAGE = 107;
+
     class Messenger extends Handler {
 
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case BluetoothMultiService.CLOSESEARCH /*101*/:
                     //BluetoothMultiService.this.stopFindDevices();
+                    int i = 0;
                 case BluetoothMultiService.CONNECTDEVICE /*102*/:
                     BluetoothMultiService.this.connectDevices(new BluetoothDeviceModel(null, msg.obj.toString()), false);
                 case BluetoothMultiService.RECEIVEDATA /*103*/:
@@ -432,6 +442,7 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
                 case BluetoothMultiService.CONNECTTED /*106*/:
                     BluetoothMultiService.this.onConnectDevice((BluetoothDeviceModel)msg.obj);
                 case BluetoothMultiService.DELAYTASKMESSAGE /*107*/:
+                    int j =0;
                     //BluetoothMultiService.this.DelayMessage(msg.arg1);
                 default:
             }
@@ -440,9 +451,9 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
 
     protected void onConnectDevice(BluetoothDeviceModel device) {
         Log.d("peneloco", "onConnectDevice");
-        //onToast((int) R.string.dialog7);
+        onToast((int) R.string.dialog7);
         queryId();
-        //messenger.sendMessageDelayed(messenger.obtainMessage(DELAYTASKMESSAGE, ORDER_QUERYSET, -1), DEALYTASK);
+        messenger.sendMessageDelayed(messenger.obtainMessage(DELAYTASKMESSAGE, ORDER_QUERYSET, -1), DELAYTASKMESSAGE);
     }
 
     public void NextMessage(Object data) {

@@ -158,7 +158,6 @@ public class IOHandler {
                         sendBroadcastNotify(ServiceConstants.SETTING_CHANGE);
                     case CursorAdapter.FLAG_AUTO_REQUERY /*1*/:
                         getDeviceStatus();
-                        Log.d("CASE 1", "Asking for device status to DB");
                     case CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER /*2*/:
                         getHignLowPa(ConfigParams.LOWPA);
                     case NotificationCompat.WearableExtender.SIZE_MEDIUM /*3*/:
@@ -166,8 +165,6 @@ public class IOHandler {
                     case TransportMediator.FLAG_KEY_MEDIA_PLAY /*4*/:
                         this.listener.onToast((int) R.string.taiyasetsuccess);
                         getDeviceId();
-                        getHignLowPa(ConfigParams.LOWPA);
-                        getHignLowPa(ConfigParams.HIGHPA);
                     case NotificationCompat.WearableExtender.SIZE_FULL_SCREEN /*5*/:
                         if (msg.length == 9) {
                             this.listener.onToast((int) R.string.toast6);
