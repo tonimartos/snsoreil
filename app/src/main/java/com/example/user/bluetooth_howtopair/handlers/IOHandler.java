@@ -1,7 +1,6 @@
 package com.example.user.bluetooth_howtopair.handlers;
 
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -13,13 +12,13 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.user.bluetooth_howtopair.DevicesSetProvider.DevicesSetColumns;
-import com.example.user.bluetooth_howtopair.DevicesProvider.DevicesColumns;
 import com.example.user.bluetooth_howtopair.R;
 import com.example.user.bluetooth_howtopair.utils.ConfigParams;
-import com.example.user.bluetooth_howtopair.utils.ProviderUtils;
 import com.example.user.bluetooth_howtopair.utils.ServiceConstants;
 import com.example.user.bluetooth_howtopair.utils.UtilsConfig;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class IOHandler {
     byte[] cachebyte;
@@ -293,7 +292,17 @@ public class IOHandler {
     }
 
     private void getDeviceStatus() {
-        switch (getAbsValue(this.databyte[3])) {
+        int tyreId = getAbsValue(this.databyte[3]);
+
+        HashMap<String, String> tyreData= new HashMap();
+        tyreData.put("DEVICES_IR", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
+        tyreData.put("DEVICES_TY", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
+        tyreData.put("DEVICES_TW", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
+        tyreData.put("DEVICES_DL", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
+        tyreData.put("DEVICES_DISTYPE", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
+        getTyre(tyreData, tyreId);
+
+        /*switch (tyreId) {
             case 1:
                 Log.d("DEVICES_IR1", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
                 Log.d("DEVICES_TY1", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
@@ -302,27 +311,27 @@ public class IOHandler {
                 Log.d("DEVICES_DISTYPE1", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
                 break;
             case 2:
-                Log.d("DEVICES_IR1", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
-                Log.d("DEVICES_TY1", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
-                Log.d("DEVICES_TW1", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
-                Log.d("DEVICES_DL1", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
-                Log.d("DEVICES_DISTYPE1", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
+                Log.d("DEVICES_IR2", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
+                Log.d("DEVICES_TY2", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
+                Log.d("DEVICES_TW2", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
+                Log.d("DEVICES_DL2", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
+                Log.d("DEVICES_DISTYPE2", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
                 break;
             case 3:
-                Log.d("DEVICES_IR1", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
-                Log.d("DEVICES_TY1", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
-                Log.d("DEVICES_TW1", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
-                Log.d("DEVICES_DL1", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
-                Log.d("DEVICES_DISTYPE1", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
+                Log.d("DEVICES_IR3", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
+                Log.d("DEVICES_TY3", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
+                Log.d("DEVICES_TW3", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
+                Log.d("DEVICES_DL3", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
+                Log.d("DEVICES_DISTYPE3", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
                 break;
             case 4:
-                Log.d("DEVICES_IR1", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
-                Log.d("DEVICES_TY1", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
-                Log.d("DEVICES_TW1", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
-                Log.d("DEVICES_DL1", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
-                Log.d("DEVICES_DISTYPE1", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
+                Log.d("DEVICES_IR4", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
+                Log.d("DEVICES_TY4", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
+                Log.d("DEVICES_TW4", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
+                Log.d("DEVICES_DL4", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
+                Log.d("DEVICES_DISTYPE4", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
                 break;
-        }
+        }*/
     }
 
     private void getLength() {
@@ -347,5 +356,20 @@ public class IOHandler {
 
     public void setHandler(Handler dataCrackHandler) {
     }
+
+    private static Tyre getTyre (HashMap<String,String> tyreData, int id) {
+
+        Tyre tyre = new Tyre();
+
+        tyre.setId(id);
+        tyre.setIr(Integer.parseInt(tyreData.get("DEVICE_IR")));
+        tyre.setIr(Integer.parseInt(tyreData.get("DEVICE_DL")));
+        tyre.setIr(Integer.parseInt(tyreData.get("DEVICE_TY")));
+        tyre.setIr(Integer.parseInt(tyreData.get("DEVICE_TW")));
+        tyre.setIr(Integer.parseInt(tyreData.get("DEVICE_DISTYPE")));
+
+        return tyre;
+    }
+
 }
 

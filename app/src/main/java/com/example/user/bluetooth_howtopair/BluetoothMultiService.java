@@ -26,12 +26,9 @@ import com.example.user.bluetooth_howtopair.handlers.BluetoothDeviceModel;
 import com.example.user.bluetooth_howtopair.handlers.CacheMessageManager;
 import com.example.user.bluetooth_howtopair.handlers.CacheMessageManager.CacheMessageListener;
 import com.example.user.bluetooth_howtopair.handlers.DataUnit;
-import com.example.user.bluetooth_howtopair.handlers.ExampleApplication;
 import com.example.user.bluetooth_howtopair.handlers.IOHandler;
 import com.example.user.bluetooth_howtopair.handlers.IOHandler.IOHandlerListener;
 import com.example.user.bluetooth_howtopair.handlers.MessageManager;
-import com.example.user.bluetooth_howtopair.handlers.Tyre;
-import com.example.user.bluetooth_howtopair.utils.ConfigParams;
 import com.example.user.bluetooth_howtopair.utils.Constants;
 import com.example.user.bluetooth_howtopair.utils.ServiceConstants;
 import com.example.user.bluetooth_howtopair.utils.UtilsConfig;
@@ -465,13 +462,4 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
         this.mBluetoothGatt.writeCharacteristic(this.mWriteCharacteristic);
     }
 
-
-    public void getTyreData (Tyre tyre, int id){
-        Integer irh = ExampleApplication.getInstance().getIntValue(ConfigParams.HIGHPA);
-        Integer irl = ExampleApplication.getInstance().getIntValue(ConfigParams.LOWPA);
-        Integer itw = ExampleApplication.getInstance().getIntValue(ConfigParams.HIGHTW);
-        Integer idl = ExampleApplication.getInstance().getIntValue(ConfigParams.LOWDL);
-
-        Log.d("Tyre data", irh.toString() + irl.toString() + itw.toString() + idl.toString());
-    }
 }
