@@ -1,13 +1,9 @@
 package com.example.user.bluetooth_howtopair.utils;
 
 import android.content.Context;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.media.TransportMediator;
-import android.support.v4.widget.CursorAdapter;
 
-import com.example.user.bluetooth_howtopair.handlers.ExampleApplication;
 import com.example.user.bluetooth_howtopair.R;
-import com.example.user.bluetooth_howtopair.activities.MainActivity;
+import com.example.user.bluetooth_howtopair.handlers.ExampleApplication;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -18,18 +14,16 @@ public class Utils {
     public static final int BASELOW = 15;
     public static final int BASETEMPERATURE = 70;
     public static final byte HEAD1 = (byte) -4;
-    public static final String UNINT1 = "PSI";
-    public static final String UNINT2 = "Kpa";
 
     public static String getLT(Context context, int id) {
         switch (id) {
-            case CursorAdapter.FLAG_AUTO_REQUERY /*1*/:
+            case 1:
                 return context.getString(R.string.carlunzihigh1);
-            case CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER /*2*/:
+            case 2:
                 return context.getString(R.string.carlunzihigh2);
-            case NotificationCompat.WearableExtender.SIZE_MEDIUM /*3*/:
+            case 3:
                 return context.getString(R.string.carlunzihigh3);
-            case TransportMediator.FLAG_KEY_MEDIA_PLAY /*4*/:
+            case 4:
                 return context.getString(R.string.carlunzihigh4);
             default:
                 return context.getString(R.string.carlunzihigh1);
@@ -83,13 +77,13 @@ public class Utils {
         int value = ExampleApplication.getInstance().getIntValue(ConfigParams.LOWPA);
         String str = "Bar";
         switch (type) {
-            case MainActivity.OPENSET /*0*/:
+            case 0:
                 return new StringBuilder(String.valueOf(new DecimalFormat("0.0").format((((double) (value + BASELOW)) * 1.0d) / 10.0d))).append("Bar").toString();
-            case CursorAdapter.FLAG_AUTO_REQUERY /*1*/:
-                return new StringBuilder(String.valueOf(new DecimalFormat("0.0").format((((double) (value + BASELOW)) * 14.5d) / 10.0d))).append(UNINT1).toString();
-            case CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER /*2*/:
-                return new StringBuilder(String.valueOf(new DecimalFormat("0.0").format((((double) (value + BASELOW)) * 100.0d) / 10.0d))).append(UNINT2).toString();
-            case NotificationCompat.WearableExtender.SIZE_MEDIUM /*3*/:
+            case 1:
+                return new StringBuilder(String.valueOf(new DecimalFormat("0.0").format((((double) (value + BASELOW)) * 14.5d) / 10.0d))).append("PSI").toString();
+            case 2:
+                return new StringBuilder(String.valueOf(new DecimalFormat("0.0").format((((double) (value + BASELOW)) * 100.0d) / 10.0d))).append("Kpa").toString();
+            case 3:
                 return new StringBuilder(String.valueOf(new DecimalFormat("0.0").format((((double) (value + BASELOW)) * 1.02d) / 10.0d))).append("Kg").toString();
             default:
                 return new StringBuilder(String.valueOf(new DecimalFormat("0.0").format((((double) (value + BASELOW)) * 1.0d) / 10.0d))).append("Bar").toString();
@@ -99,15 +93,14 @@ public class Utils {
     public static String getHighpa(int progress) {
         int type = ExampleApplication.getInstance().getIntValue(ConfigParams.YALIUNIT);
         int value = ExampleApplication.getInstance().getIntValue(ConfigParams.HIGHPA);
-        String str = "Bar";
         switch (type) {
-            case MainActivity.OPENSET /*0*/:
+            case 0:
                 return new StringBuilder(String.valueOf(new DecimalFormat("0.0").format((((double) (value + BASEHIGH)) * 1.0d) / 10.0d))).append("Bar").toString();
-            case CursorAdapter.FLAG_AUTO_REQUERY /*1*/:
-                return new StringBuilder(String.valueOf(new DecimalFormat("0.0").format((((double) (value + BASEHIGH)) * 14.5d) / 10.0d))).append(UNINT1).toString();
-            case CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER /*2*/:
-                return new StringBuilder(String.valueOf(new DecimalFormat("0.0").format((((double) (value + BASEHIGH)) * 100.0d) / 10.0d))).append(UNINT2).toString();
-            case NotificationCompat.WearableExtender.SIZE_MEDIUM /*3*/:
+            case 1:
+                return new StringBuilder(String.valueOf(new DecimalFormat("0.0").format((((double) (value + BASEHIGH)) * 14.5d) / 10.0d))).append("PSI").toString();
+            case 2:
+                return new StringBuilder(String.valueOf(new DecimalFormat("0.0").format((((double) (value + BASEHIGH)) * 100.0d) / 10.0d))).append("Kpa").toString();
+            case 3:
                 return new StringBuilder(String.valueOf(new DecimalFormat("0.0").format((((double) (value + BASEHIGH)) * 1.02d) / 10.0d))).append("Kg").toString();
             default:
                 return new StringBuilder(String.valueOf(new DecimalFormat("0.0").format((((double) (value + BASEHIGH)) * 1.0d) / 10.0d))).append("Bar").toString();
@@ -124,13 +117,13 @@ public class Utils {
     public static String getUnitTaiya() {
         String str = "Bar";
         switch (ExampleApplication.getInstance().getIntValue(ConfigParams.YALIUNIT)) {
-            case MainActivity.OPENSET /*0*/:
+            case 0:
                 return "Bar";
-            case CursorAdapter.FLAG_AUTO_REQUERY /*1*/:
-                return UNINT1;
-            case CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER /*2*/:
-                return UNINT2;
-            case NotificationCompat.WearableExtender.SIZE_MEDIUM /*3*/:
+            case 1:
+                return "PSI";
+            case 2:
+                return "Kpa";
+            case 3:
                 return "Kg";
             default:
                 return str;
@@ -143,13 +136,13 @@ public class Utils {
 
     public static String getTaiyaValue(int value) {
         switch (ExampleApplication.getInstance().getIntValue(ConfigParams.YALIUNIT)) {
-            case MainActivity.OPENSET /*0*/:
+            case 0:
                 return new DecimalFormat("0.0").format(((((double) value) * 1.0d) / 10.0d) * 1.0d);
-            case CursorAdapter.FLAG_AUTO_REQUERY /*1*/:
+            case 1:
                 return new DecimalFormat("0.0").format(((((double) value) * 1.0d) / 10.0d) * 14.5d);
-            case CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER /*2*/:
+            case 2:
                 return new DecimalFormat("0.0").format(((((double) value) * 1.0d) / 10.0d) * 100.0d);
-            case NotificationCompat.WearableExtender.SIZE_MEDIUM /*3*/:
+            case 3:
                 return new DecimalFormat("0.0").format(((((double) value) * 1.0d) / 10.0d) * 1.02d);
             default:
                 return new DecimalFormat("0.0").format((((double) value) * 1.0d) / 10.0d);

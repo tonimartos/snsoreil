@@ -193,17 +193,17 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
         sendBroadcast(intent);
 
         switch (state) {
-            case 1 /*1*/:
+            case 1:
                 isConnect = true;
                 break;
-            case 2 /*2*/:
+            case 2:
                 isConnect = true;
                 break;
-            case 3 /*3*/:
+            case 3:
                 isConnect = false;
                 break;
                 //isConnect = true;
-            case 4 /*4*/:
+            case 4:
                 isConnect = false;
                 //this.writeCharacteristic = null;
                 //this.mBluetoothGatt = null;
@@ -240,7 +240,7 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
         }
     }
 
-    class BluetoothConnectionCallback extends BluetoothGattCallback {
+    private class BluetoothConnectionCallback extends BluetoothGattCallback {
 
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             if (newState == STATE_CONNECTED) {
@@ -291,7 +291,6 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
             DataUnit dataUnit = new DataUnit(gatt.getDevice(), arrayOfByte);
 
             messenger.obtainMessage(BluetoothMultiService.RECEIVEDATA, dataUnit).sendToTarget();
-            //receiveData(dataUnit);
 
             Log.i("RECEIVE DATA", String.valueOf(messenger.obtainMessage(103, dataUnit)));
         }
@@ -325,8 +324,6 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
                         this.mWriteCharacteristic = gattCharacteristic;
                         this.mWriteCharacteristic.setWriteType(2);
 
-                        //characteristicWrite(gatt, gattCharacteristic);
-                        //characteristicRead(gatt, gattCharacteristic);
                         saveConnectedDevice(this.mWriteCharacteristic, gatt);
 
                     } else if (gattCharacteristic.getUuid().toString().equalsIgnoreCase(Constants.BLUETOOTH_UUID.toString())) {
@@ -391,29 +388,6 @@ public class BluetoothMultiService extends Service implements CacheMessageListen
         this.writeCharacteristic = writeCharacteristic;
 
         messenger.obtainMessage(CONNECTTED, new BluetoothDeviceModel(gatt.getDevice())).sendToTarget();
-        //messenger.obtainMessage(RECEIVEDATA, new BluetoothDeviceModel(gatt.getDevice())).sendToTarget();
-        /*
-        ContentValues values = new ContentValues();
-        values.put(DevicesSetColumns.DEVICES_SYSTEMID, gatt.getDevice().getAddress());
-
-        Uri uri = DevicesColumns.CONTENT_URI;
-        String[] strArr = new String[ORDER_QUERYSET];
-        strArr[INITORDER] = DevicesSetColumns.DEVICES_SYSTEMID;
-        if (!ProviderUtils.existData(this, uri, values, strArr)) {
-            ProviderUtils.deleteData(this, DevicesColumns.CONTENT_URI, null, new String[INITORDER]);
-        }
-        values.put(DevicesSetColumns.DEVICES_NAME, gatt.getDevice().getName());
-        values.put(DevicesSetColumns.DEVICES_NICK, gatt.getDevice().getName());
-        values.put(DevicesSetColumns.DEVICES_ONLINE, Boolean.valueOf(true));
-        values.put(DevicesSetColumns.DEVICES_LASTTIME, Long.valueOf(System.currentTimeMillis()));
-        uri = DevicesColumns.CONTENT_URI;
-        strArr = new String[ORDER_QUERYSET];
-        strArr[INITORDER] = DevicesSetColumns.DEVICES_SYSTEMID;
-
-        ProviderUtils.insertData(this, uri, values, strArr);
-        ExampleApplication.getInstance().setValue(ConfigParams.LASTBINDNOTIFYMAC, gatt.getDevice().getAddress());
-
-        this.messenger.obtainMessage(CONNECTTED, new BluetoothDeviceVo(gatt.getDevice())).sendToTarget();*/
     }
 
     public static final int CLOSESEARCH = 101;

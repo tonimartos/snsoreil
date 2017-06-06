@@ -15,10 +15,10 @@ import android.widget.Toast;
 import com.example.user.bluetooth_howtopair.R;
 import com.example.user.bluetooth_howtopair.utils.ConfigParams;
 import com.example.user.bluetooth_howtopair.utils.ServiceConstants;
+import com.example.user.bluetooth_howtopair.utils.Utils;
 import com.example.user.bluetooth_howtopair.utils.UtilsConfig;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class IOHandler {
     byte[] cachebyte;
@@ -31,6 +31,7 @@ public class IOHandler {
     private String mac;
     private int order;
     private ContentResolver resolver;
+
 
     public interface IOHandlerListener {
         Context getContext();
@@ -147,7 +148,7 @@ public class IOHandler {
                         ExampleApplication.getInstance().setValue(ConfigParams.HIGHTW, getAbsValue(this.databyte[6]) - 70);
                         ExampleApplication.getInstance().setValue(ConfigParams.OBDPOWERVOICE, getAbsValue(this.databyte[7]) == 0);
                     case -43:
-                        String serial = getSerial();
+                        //String serial = getSerial();
                         getDeviceIds();
                     case -27:
                         this.listener.onToast((int) R.string.taiyachangesuccess);
@@ -155,16 +156,16 @@ public class IOHandler {
                     case -26:
                         this.listener.onToast((int) R.string.taiyachangefail);
                         sendBroadcastNotify(ServiceConstants.SETTING_CHANGE);
-                    case CursorAdapter.FLAG_AUTO_REQUERY /*1*/:
+                    case 1:
                         getDeviceStatus();
-                    case CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER /*2*/:
+                    case 2:
                         getHignLowPa(ConfigParams.LOWPA);
-                    case NotificationCompat.WearableExtender.SIZE_MEDIUM /*3*/:
+                    case 3:
                         getHignLowPa(ConfigParams.HIGHPA);
-                    case TransportMediator.FLAG_KEY_MEDIA_PLAY /*4*/:
+                    case 4:
                         this.listener.onToast((int) R.string.taiyasetsuccess);
                         getDeviceId();
-                    case NotificationCompat.WearableExtender.SIZE_FULL_SCREEN /*5*/:
+                    case 5:
                         if (msg.length == 9) {
                             this.listener.onToast((int) R.string.toast6);
                         }
@@ -300,38 +301,10 @@ public class IOHandler {
         tyreData.put("DEVICES_TW", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
         tyreData.put("DEVICES_DL", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
         tyreData.put("DEVICES_DISTYPE", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
-        getTyre(tyreData, tyreId);
 
-        /*switch (tyreId) {
-            case 1:
-                Log.d("DEVICES_IR1", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
-                Log.d("DEVICES_TY1", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
-                Log.d("DEVICES_TW1", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
-                Log.d("DEVICES_DL1", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
-                Log.d("DEVICES_DISTYPE1", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
-                break;
-            case 2:
-                Log.d("DEVICES_IR2", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
-                Log.d("DEVICES_TY2", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
-                Log.d("DEVICES_TW2", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
-                Log.d("DEVICES_DL2", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
-                Log.d("DEVICES_DISTYPE2", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
-                break;
-            case 3:
-                Log.d("DEVICES_IR3", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
-                Log.d("DEVICES_TY3", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
-                Log.d("DEVICES_TW3", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
-                Log.d("DEVICES_DL3", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
-                Log.d("DEVICES_DISTYPE3", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
-                break;
-            case 4:
-                Log.d("DEVICES_IR4", Integer.valueOf(getAbsValue(this.databyte[4])).toString());
-                Log.d("DEVICES_TY4", Integer.valueOf(getAbsValue(this.databyte[5])).toString());
-                Log.d("DEVICES_TW4", Integer.valueOf(getAbsValue(this.databyte[6])).toString());
-                Log.d("DEVICES_DL4", Integer.valueOf(getAbsValue(this.databyte[7])).toString());
-                Log.d("DEVICES_DISTYPE4", Integer.valueOf(getAbsValue(this.databyte[8])).toString());
-                break;
-        }*/
+        Tyre tyre = getTyre(tyreData, tyreId);
+
+        getTransformedResults(tyre, tyreId);
     }
 
     private void getLength() {
@@ -363,12 +336,26 @@ public class IOHandler {
 
         tyre.setId(id);
         tyre.setIr(Integer.parseInt(tyreData.get("DEVICE_IR")));
-        tyre.setIr(Integer.parseInt(tyreData.get("DEVICE_DL")));
-        tyre.setIr(Integer.parseInt(tyreData.get("DEVICE_TY")));
-        tyre.setIr(Integer.parseInt(tyreData.get("DEVICE_TW")));
-        tyre.setIr(Integer.parseInt(tyreData.get("DEVICE_DISTYPE")));
+        Log.d("DEVICE_IR: ", Utils.getTaiyaValue(tyre.getTy()));
+        tyre.setDl(Integer.parseInt(tyreData.get("DEVICE_DL")));
+        Log.d("DEVICE_DL: ", Utils.getTaiyaValue(tyre.getTy()));
+        tyre.setTy(Integer.parseInt(tyreData.get("DEVICE_TY")));
+        Log.d("DEVICE_TY: ", Utils.getTaiyaValue(tyre.getTy()));
+        tyre.setTw(Integer.parseInt(tyreData.get("DEVICE_TW")));
+        Log.d("DEVICE_TW: ", Utils.getTaiyaValue(tyre.getTy()));
+        tyre.setDis(Integer.parseInt(tyreData.get("DEVICE_DISTYPE")));
 
         return tyre;
+    }
+
+    /* Análogo a FreshView */
+    private void getTransformedResults (Tyre tyre, int id){
+
+        byte dd = (byte) tyre.getIr();
+        Integer ir = ByteUtils.byteToInt(dd, id);
+        Log.d("Pressure: ", Utils.getTaiyaValue(tyre.getTy()));
+        Log.d("Temperature: ", Utils.getTaiyaValue(tyre.getTw()));
+        Log.d("IR: ", ir.toString());
     }
 
 }
